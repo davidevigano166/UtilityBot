@@ -1,9 +1,9 @@
 {
-	"name": "greeter-bot",
-	"version": "1.0.0",
-	"description": "My First Discord Bot",
+	"name": "was-bot",
+	"version": "0.0.1",
+	"description": "A simple Discord bot.",
 	"main": "bot.js",
-	"author": "Your Name",
+	"author": "Dave",
 	"dependencies": {
 		"discord.js": "^12.4.0",
 		"winston": "^3.3.3"
