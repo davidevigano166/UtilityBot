@@ -81,7 +81,7 @@ client.on('message', msg => { // Replies
         }
         break;
       case commands.cmdrandom:
-        msg.channel.send('Your random number is ' + Math.random);
+        msg.channel.send('Your random number is ' + Math.random());
         break;
 	  }
   }
