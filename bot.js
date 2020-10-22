@@ -23,10 +23,10 @@ client.on('message', msg => { // Replies
   if (msg.content.substring(0, 1) === '$') {
     let command = msg.content.substring(1).split(' ')[0];
 	  switch (command) {
-		  case commands.cmdhelp:
+		  case commands.cmdhelp: 
         let str = 'Available commands: \n';
         for (var x in commands) {
-          str += '$' + commands[x] + '\n';
+          str += '- $' + commands[x] + '\n';
         }
 		  	msg.channel.send(str);
 			  break;
