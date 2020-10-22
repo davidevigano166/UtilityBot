@@ -9,7 +9,9 @@ const commands = { // Commands
   cmdmembers: 'members',
   cmdinfo: 'info',
   cmdtime: 'time',
-  cmddate: 'date'
+  cmddate: 'date',
+  cmdkick: 'kick',
+  cmdban: 'ban'
 }
 
 client.on('ready', () => { // Initial Function
@@ -19,7 +21,7 @@ client.on('ready', () => { // Initial Function
 
 client.on('message', msg => { // Replies
   if (msg.content.substring(0, 1) === '$') {
-	  let command = msg.content.substring(1);
+    let command = msg.content.substring(1).split(' ')[0];
 	  switch (command) {
 		  case commands.cmdhelp:
         let str = 'Available commands: \n';
@@ -42,6 +44,34 @@ client.on('message', msg => { // Replies
         let datevar = new Date();
         let month = parseInt(datevar.getMonth())+1;
         msg.channel.send('Today is ' + datevar.getDate() + '-' + month + '-' + datevar.getFullYear());
+        break;
+      case commands.cmdkick:
+        const users_to_kick = msg.mentions.members;
+        if (msg.member.hasPermission('KICK_MEMBERS')) {
+          if (users_to_kick) {
+            users_to_kick.forEach(user => {
+              user.kick().then().catch(() => {
+                msg.channel.send('You can not kick an user with higher permissions than yours');
+              });
+            })
+          }
+        } else {
+          msg.channel.send('You do not have permissions to kick');
+        }
+        break;
+      case commands.cmdban:
+        const users_to_ban = msg.mentions.members;
+        if (msg.member.hasPermission('BAN_MEMBERS')) {
+          if (users_to_ban) {
+            users_to_ban.forEach(user => {
+              user.ban().then().catch(() => {
+                msg.channel.send('You can not ban an user with higher permissions than yours');
+              });
+            })
+          }
+        } else {
+          msg.channel.send('You do not have permissions to ban');
+        }
         break;
 	  }
   }
