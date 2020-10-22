@@ -17,6 +17,7 @@ const commands = { // Commands
 
 client.on('ready', () => { // Initial Function
   console.log("Logged in as " + client.user.tag);
+  client.user.setStatus("online");
   client.user.setPresence({ activity: { name: 'use $help'}, status: 'online'});
 });
 
