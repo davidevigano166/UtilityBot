@@ -26,7 +26,7 @@ client.on('message', msg => { // Replies
 		  case commands.cmdhelp: 
         let str = 'Available commands: \n';
         for (var x in commands) {
-          str += '- $' + commands[x] + '\n';
+          str += '$' + commands[x] + '\n';
         }
 		  	msg.channel.send(str);
 			  break;
