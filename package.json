@@ -1,5 +1,5 @@
 {
-	"name": "was-bot",
+	"name": "utility-bot",
 	"version": "0.0.1",
 	"description": "A simple Discord bot.",
 	"main": "bot.js",
