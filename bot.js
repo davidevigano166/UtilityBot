@@ -11,7 +11,8 @@ const commands = { // Commands
   cmdtime: 'time',
   cmddate: 'date',
   cmdkick: 'kick',
-  cmdban: 'ban'
+  cmdban: 'ban',
+  cmdrandom: 'random'
 }
 
 client.on('ready', () => { // Initial Function
@@ -78,6 +79,9 @@ client.on('message', msg => { // Replies
         } else {
           msg.channel.send('You do not have permissions to ban');
         }
+        break;
+      case commands.cmdrandom:
+        msg.channel.send('Your random number is ' + Math.random);
         break;
 	  }
   }
