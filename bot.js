@@ -27,9 +27,9 @@ client.on('message', msg => { // Replies
         let str = 'Available commands: \n';
         for (var x in commands) {
           if (x === 'cmdkick') {
-            str += '$' + commands[x] + ' [@user]';
+            str += '$' + commands[x] + ' [@user]' + '\n';
           } else if (x === 'cmdban') {
-            str += '$' + commands[x] + ' [@user]';
+            str += '$' + commands[x] + ' [@user]' + '\n';
           } else {
             str += '$' + commands[x] + '\n';
           }
