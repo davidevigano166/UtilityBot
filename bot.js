@@ -2,6 +2,7 @@ var fs = require('fs');
 var https = require('https');
 
 const Discord = require('discord.js');
+const Weather = require('weather-js');
 const { exit } = require('process');
 const { parse } = require('path');
 const client = new Discord.Client();
@@ -37,7 +38,9 @@ client.on('message', msg => { // Replies
           } else if (x === 'cmdban') {
             str += '$' + commands[x] + ' [@user]' + '\n';
           } else if (x === 'cmdwiki') {
-            str += '$' + commands[x] + ' [argument]' + '\n';
+            str += '$' + commands[x] + ' [topic]' + '\n';
+          } else if (x === 'cmdweather') {
+            str += '$' + commands[x] + ' [location]' + '\n';
           } else {
             str += '$' + commands[x] + '\n';
           }
@@ -97,8 +100,8 @@ client.on('message', msg => { // Replies
         const regexAmpersand = /&amp;*/gm;
         const regexTrunc = /\..+/gm;
         let toSearch;
-        toSearch = msg.content.replace(regexCom, "");
-        toSearch = toSearch.replace(" ", "%20");
+        toSearch = msg.content.replace(regexCom, '');
+        toSearch = toSearch.replace(' ', "%20");
         https.get('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + toSearch + '&utf8=&format=json', (resp) => {
           let data = '';
           resp.on('data', (chunk) => {
@@ -109,23 +112,56 @@ client.on('message', msg => { // Replies
             let parsedObj = JSON.parse(data);
             let objRes = parsedObj.query.search[0];
             if(objRes == undefined){
-              msg.channel.send("I could not find any results for " + toSearch);
+              msg.channel.send('I could not find any results for ' + toSearch);
               return;
             }
             let description;
             let newDesc;
             description = objRes.snippet;
-            newDesc = description.replace(regexSpan, "")
-            newDesc = newDesc.replace(regexQuot, "")
-            newDesc = newDesc.replace(regexAmpersand, "&");
-            newDesc = newDesc.replace(regexTrunc, "");
+            newDesc = description.replace(regexSpan, '')
+            newDesc = newDesc.replace(regexQuot, '')
+            newDesc = newDesc.replace(regexAmpersand, '&');
+            newDesc = newDesc.replace(regexTrunc, '');
             tempResString += 'You searched for ' + objRes.title + "\n\n" + 'Result: ' + newDesc;
             msg.channel.send(tempResString);
           });
-        }).on("error", (err) => {
-          console.log("Error: " + err.message);
+        }).on('error', (err) => {
+          console.log('Error: ' + err.message);
         });
         break;
+      case commands.cmdweather:
+        let regexQMarks = /"/gm;
+        let regexComWeather = /\$weather /gm;
+        let locationToSearch;
+        locationToSearch = msg.content.replace(regexComWeather, '');
+        Weather.find({search: locationToSearch, degreeType: 'C'}, function(err, result) {
+          if(err) console.log(err);
+          if (result[0] === undefined) {
+            msg.channel.send('Could not find the location you are looking for');
+          } else {
+            let currentLocation = JSON.stringify(result[0].location.name, null, 2);
+            let currentLocationMod = currentLocation.replace(regexQMarks, '');
+            let currentTemp = JSON.stringify(result[0].current.temperature, null, 2);
+            let currentTempMod = currentTemp.replace(regexQMarks, '');
+            let currentFeels = JSON.stringify(result[0].current.feelslike, null, 2);
+            let currentFeelsMod = currentFeels.replace(regexQMarks, '');
+            let currentHum = JSON.stringify(result[0].current.humidity, null, 2);
+            let currentHumMod = currentHum.replace(regexQMarks, '');
+            let currentSkyText = JSON.stringify(result[0].current.skytext, null, 2);
+            let currentSkyTextMod = currentSkyText.replace(regexQMarks, '');
+            let currentWindSpeed = JSON.stringify(result[0].current.windspeed, null, 2);
+            let currentWindSpeedMod = currentWindSpeed.replace(regexQMarks, '');
+            let weatherOutput = new Discord.MessageEmbed;
+            weatherOutput.addField('Location', currentLocationMod, true);
+            weatherOutput.addField('Temperature', currentTempMod, true);
+            weatherOutput.addField('Feels like', currentFeelsMod, true);
+            weatherOutput.addField('Humidity', currentHumMod + '%', true);
+            weatherOutput.addField('Skytext', currentSkyTextMod, true);
+            weatherOutput.addField('Wind speed', currentWindSpeedMod, true);
+            msg.channel.send(weatherOutput);
+          }
+        });
+        break; 
 	  }
   }
 });

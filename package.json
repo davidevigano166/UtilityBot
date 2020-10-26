@@ -6,6 +6,7 @@
 	"author": "Dave",
 	"dependencies": {
 		"discord.js": "^12.4.0",
+		"weather-js": "^2.0.0",
 		"winston": "^3.3.3"
 	}
 }
