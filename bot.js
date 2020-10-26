@@ -1,7 +1,9 @@
 var fs = require('fs');
+var https = require('https');
 
 const Discord = require('discord.js');
 const { exit } = require('process');
+const { parse } = require('path');
 const client = new Discord.Client();
 
 const commands = { // Commands
@@ -12,7 +14,9 @@ const commands = { // Commands
   cmddate: 'date',
   cmdkick: 'kick',
   cmdban: 'ban',
-  cmdrandom: 'random'
+  cmdrandom: 'random',
+  cmdwiki: 'wiki',
+  cmdweather: 'weather'
 }
 
 client.on('ready', () => { // Initial Function
@@ -32,6 +36,8 @@ client.on('message', msg => { // Replies
             str += '$' + commands[x] + ' [@user]' + '\n';
           } else if (x === 'cmdban') {
             str += '$' + commands[x] + ' [@user]' + '\n';
+          } else if (x === 'cmdwiki') {
+            str += '$' + commands[x] + ' [argument]' + '\n';
           } else {
             str += '$' + commands[x] + '\n';
           }
@@ -83,6 +89,42 @@ client.on('message', msg => { // Replies
         break;
       case commands.cmdrandom:
         msg.channel.send('Your random number is ' + Math.floor(Math.random() * 101));
+        break;
+      case commands.cmdwiki:
+        const regexCom = /\$wiki /gm;
+        const regexSpan = /<[\w=" /]+>/gm;
+        const regexQuot = /&quot;*/gm;
+        const regexAmpersand = /&amp;*/gm;
+        const regexTrunc = /\..+/gm;
+        let toSearch;
+        toSearch = msg.content.replace(regexCom, "");
+        toSearch = toSearch.replace(" ", "%20");
+        https.get('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + toSearch + '&utf8=&format=json', (resp) => {
+          let data = '';
+          resp.on('data', (chunk) => {
+            data += chunk;
+          });
+          resp.on('end', () => {
+            let tempResString = "";
+            let parsedObj = JSON.parse(data);
+            let objRes = parsedObj.query.search[0];
+            if(objRes == undefined){
+              msg.channel.send("I could not find any results for " + toSearch);
+              return;
+            }
+            let description;
+            let newDesc;
+            description = objRes.snippet;
+            newDesc = description.replace(regexSpan, "")
+            newDesc = newDesc.replace(regexQuot, "")
+            newDesc = newDesc.replace(regexAmpersand, "&");
+            newDesc = newDesc.replace(regexTrunc, "");
+            tempResString += 'You searched for ' + objRes.title + "\n\n" + 'Result: ' + newDesc;
+            msg.channel.send(tempResString);
+          });
+        }).on("error", (err) => {
+          console.log("Error: " + err.message);
+        });
         break;
 	  }
   }
