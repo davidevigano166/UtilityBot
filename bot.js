@@ -48,7 +48,7 @@ client.on('message', msg => { // Replies
 		  	msg.channel.send(str);
 			  break;
 		  case commands.cmdmembers:
-        let guildvar = client.guilds.fetch('768524986905526342').then(guild => msg.channel.send('There are ' + guild.memberCount + ' members'));
+        let guildvar = client.guilds.fetch('768524986905526342').then(guild => msg.channel.send('There are ' + guild.memberCount + ' members online'));
         break;
       case commands.cmdinfo:
         let namevar = client.guilds.fetch('768524986905526342').then(guild => msg.channel.send('Server name: ' + guild.name));
